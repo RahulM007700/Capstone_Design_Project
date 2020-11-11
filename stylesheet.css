@@ -1,0 +1,60 @@
+.sidenav {
+    height: 100%; 
+    background-image: url('https://armacad.info/images/2019/01/18/c1046a3732866090.png');
+    /* background-position: left; */
+    /* overflow-x: hidden; */
+    padding-left: -380px;
+    margin-left: -320px;
+    /* padding-top: 20px; */
+}
+
+
+.main {
+    padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+}
+
+@media screen and (max-width: 450px) {
+    .login-form{
+        margin-top: 10%;
+    }
+
+    .register-form{
+        margin-top: 10%;
+    }
+}
+
+@media screen and (min-width: 768px){
+    .main{
+        margin-left: 50%; 
+    }
+
+    .sidenav{
+        width: 70%;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+    }
+
+    .login-form{
+        margin-top: 80%;
+        padding-bottom: 50px;
+    }
+
+    .register-form{
+        margin-top: 20%;
+    }
+}
+
+.btn-black{
+    background-color: #000 !important;
+    color: #fff;
+}
+
+h5 {
+    font-style: italic;
+}
