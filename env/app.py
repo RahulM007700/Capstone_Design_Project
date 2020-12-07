@@ -41,10 +41,7 @@ def before_request():
 @app.route('/login', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    print("Here")
-    print(request.method)
-    if request.method == 'POST':
-        print("here")
+    if request.method == 'POST':            
         session.pop('user_id', None)
         print(request.form['user'])
         print(request.form['pass'])
@@ -63,20 +60,27 @@ def login():
 
     return render_template('login.html')
 
-@app.route('/student')
+@app.route('/student', methods=['GET', 'POST'])
 def student():
     if not g.user:
         return redirect(url_for('login'))
+    print(request.method)
+    if request.method == 'POST':
+        session.pop('user_id', None)
+        return redirect(url_for('logout'))
 
     return render_template('index.html')
 
-@app.route('/admin')
+@app.route('/admin', methods=['GET', 'POST'])
 def admin():
     if not g.user:
         return redirect(url_for('login'))
 
     return render_template('admin.html')
 
+@app.route('/logout')
+def logout():
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)
