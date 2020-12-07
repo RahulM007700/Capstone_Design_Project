@@ -1,3 +1,4 @@
+/* stylesheet for index.html and admin.html */
 body {
     background-color: #5D9FA3;
 }
@@ -17,4 +18,13 @@ footer {
   /* On small screens, set height to 'auto' for sidenav and grid */
 @media screen and (max-width: 767px) {
     .row.content {height:auto;} 
+}
+
+#student-monday, th, td{
+  border: 1px solid black;
+}
+
+#student-tuesday, th, td{
+  border: 1px solid black;
+  margin-top: 10px;
 }
