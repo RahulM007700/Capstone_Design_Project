@@ -22,8 +22,8 @@ class User:
         return f'<User: {self.username}>'
 
 users = []
-users.append(User(id=1, username='Rahul', password='password', type='student'))
-users.append(User(id=2, username='Wayhar', password='password', type='admin'))
+users.append(User(id=1, username='Rahul@gmail.com', password='password', type='student'))
+users.append(User(id=2, username='Wayhar@gmail.com', password='password', type='admin'))
 
 
 app = Flask(__name__)
@@ -43,10 +43,10 @@ def before_request():
 def login():
     if request.method == 'POST':            
         session.pop('user_id', None)
-        print(request.form['user'])
-        print(request.form['pass'])
-        username = request.form['user']
-        password = request.form['pass']
+        print(request.form['email'])
+        print(request.form['password'])
+        username = request.form['email']
+        password = request.form['password']
         
         user = [x for x in users if x.username == username][0]
         if user and user.password == password:

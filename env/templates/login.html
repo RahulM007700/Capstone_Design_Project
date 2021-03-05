@@ -1,37 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title> Laboratory Schedule </title>
-        <meta charset="utf-8"> 
-        <meta name="viewport" content="width-device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="../static/stylesheet.css">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-        <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    </head>
+<html>
 
-    <body>
-        <div class="container-fluid"> 
-            <div class="sidenav">
-             </div>
-             <div class="main">
-                <div class="col-md-6 col-sm-12">
-                   <div class="login-form">
-                      <form method="POST">
-                         <div class="form-group">
-                            <label>Email</label>
-                            <input name="user" type="text" class="form-control" placeholder="Email">
-                         </div>
-                         <div class="form-group">
-                            <label>Password</label>
-                            <input name="pass" type="password" class="form-control" placeholder="Password">
-                         </div>
-                         <button type="submit" class="btn btn-black">Login</button>
-                      </form>
-                   </div>
-                </div>
-                    <h5> Please Note: If you do not have an account, contact the lab administrator. </h5>  
-             </div>
-        </div>
-    </body>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Laboratory Scheduling</title>
+    <link rel="stylesheet" href="../static/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cabin:700">
+    <link rel="stylesheet" href="../static/assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/assets/css/Login-Form-Clean.css">
+</head>
+
+<body style="background: url(&quot;assets/img/logo.png&quot;);">
+    <div class="login-clean" style="width: 350px;height: 692px;background: rgb(255,255,255);">
+        <form method="post">
+            <h2 class="sr-only">Login Form</h2>
+            <div class="illustration"></div>
+            <div class="form-group"><input class="form-control" type="email" name="email" placeholder="Email"></div>
+            <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Password"></div>
+            <div class="form-group"><button class="btn btn-primary btn-block" type="submit" style="background: #5d9fa3;" name="login_button">LogIn</button></div><a class="forgot" href="#">Please Note: If you do not have an account, contact the lab administrator</a>
+        </form>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="assets/js/grayscale.js"></script>
+</body>
+
 </html>
