@@ -9,6 +9,8 @@ from flask import (
 )
 from pymongo import MongoClient
 
+from env.thing import get_student
+
 client = MongoClient()
 
 class User:
@@ -19,7 +21,7 @@ class User:
         self.type = type
 
     def __repr__(self):
-        return f'<User: {self.username}>'
+        return str(self.username)
 
 users = []
 users.append(User(id=1, username='Rahul@gmail.com', password='password', type='student'))
@@ -68,19 +70,32 @@ def student():
     if request.method == 'POST':
         session.pop('user_id', None)
         return redirect(url_for('logout'))
-
-    return render_template('index.html')
+    student_1 = get_student(str(g.user))
+    print(g.user)
+    print("list")
+    print(student_1)
+    return render_template('index.html', student=student_1)
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     if not g.user:
         return redirect(url_for('login'))
+    if request.method == 'POST':
+        if request.form["button"] == "edit":
+            return redirect(url_for("editpage"))
+        elif request.form["button"] == "logout":
+            session.pop('user_id', None)
+            return redirect(url_for('logout'))
 
     return render_template('admin.html')
 
 @app.route('/logout')
 def logout():
     return redirect(url_for('login'))
+
+@app.route('/editpage')
+def editpage():
+    return render_template("lab.html")
 
 if __name__ == '__main__':
     app.run(debug=True)

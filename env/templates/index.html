@@ -17,9 +17,9 @@
         <div class="container"><a class="navbar-brand js-scroll-trigger" href="#">Marine biological laboratory</a><button data-toggle="collapse" class="navbar-toggler navbar-toggler-right" data-target="#navbarResponsive" type="button" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" value="Menu"><i class="fa fa-bars"></i></button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="nav navbar-nav ml-auto">
-                    <li class="nav-item nav-link js-scroll-trigger"><a class="nav-link active js-scroll-trigger" href="index.html">home</a></li>
+                    <li class="nav-item nav-link js-scroll-trigger"><a class="nav-link active js-scroll-trigger" href="#">home</a></li>
                     <li class="nav-item nav-link js-scroll-trigger"><a class="nav-link js-scroll-trigger" href="#about" style="background: rgba(255,255,255,0.3);">view full schedule</a></li>
-                    <li class="nav-item nav-link js-scroll-trigger"><form method="POST"><button class="nav-link js-scroll-trigger" style="background: rgba(255,255,255,0.3);">Log out</button></li>
+                    <li class="nav-item nav-link js-scroll-trigger"><form method="POST"><button type="submit" class="nav-link js-scroll-trigger" style="background: rgba(255,255,255,0.3);">Log out</button></form></li>
                 </ul>
             </div>
         </div>
@@ -42,7 +42,22 @@
                 <div class="col-lg-8 mx-auto">
                     <h2>Student schedule&nbsp;</h2>
                     <p>Grayscale is a free Bootstrap theme. It can be yours right now, simply download the template on&nbsp;<a href="#">the preview page</a>. The theme is open source, and you can use it for any purpose, personal or commercial.</p>
-                    <p>**can try to insert the schedules here**</p>
+                    <table>
+                        <tr>
+                            <td>Date</td>
+                            <td>Start Time</td>
+                            <td>End Time</td>
+                            <td>Company</td>
+                        </tr>
+                        {% for item in student%}
+                            <tr>
+                                <td>{{ item["Date"] }}</td>
+                                <td>{{ item["Start Time"] }}</td>
+                                <td>{{ item["End Time"] }}</td>
+                                <td>{{ item["Company"] }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
                     <p>Grayscale includes full HTML, CSS, and custom JavaScript files along with SASS and LESS files for easy customization!</p>
                 </div>
             </div>

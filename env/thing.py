@@ -23,6 +23,9 @@ class Student:
             temp2 = str(item.endtime).split()
             print(temp1[0] + "\t" + temp1[1] + "\t" + temp2[1] + "\t" + item.company)
 
+    def get_station_list(self):
+        return self.station_list
+
 
 class Station:
     def __init__(self, starttime, endtime, company, max_students):
@@ -51,7 +54,7 @@ def determine_students(Station):
         keyvistedlist = key.visited_list
         tempvisitedlist = tempList[i].visited_list
         x = 0
-        for l in range(0, len(keyvistedlist)-1):
+        for l in range(0, len(keyvistedlist) - 1):
             if keyvistedlist[l]["Company"] is Station.company:
                 x = l
                 break
@@ -65,8 +68,9 @@ def determine_students(Station):
         available_students.append(tempList[i])
     return available_students
 
+
 Station_Master_List = []
-students = [Student("Student 1"), Student("Student 2"), Student("Student 3"), Student("Student 4")]
+students = [Student("Rahul@gmail.com"), Student("Student 2"), Student("Student 3"), Student("Student 4")]
 for student in students:
     student.add_new_company("Company 1")
     student.add_new_company("Company 2")
@@ -75,26 +79,24 @@ new_station_1 = Station(dt.datetime(2021, 6, 15, 15, 0, 0), dt.datetime(2021, 6,
 new_station_2 = Station(dt.datetime(2021, 6, 15, 15, 0, 0), dt.datetime(2021, 6, 15, 15, 30, 0), "Company 1", 2)
 
 available_students = determine_students(new_station_1)
-#print("length of list is " + str(len(available_students)))
+# print("length of list is " + str(len(available_students)))
 for student in available_students:
     Station_Master_List.append(new_station_1)
     student.add_vendor(new_station_1)
 
-
 available_students = determine_students(new_station_2)
-#print("length of list is " + str(len(available_students)))
-#for student in available_students:
+# print("length of list is " + str(len(available_students)))
+# for student in available_students:
 #    print(student.name)
-#print("length of list is " + str(len(available_students)))
+# print("length of list is " + str(len(available_students)))
 for student in available_students:
     Station_Master_List.append(new_station_2)
     student.add_vendor(new_station_2)
 
-
 new_station_3 = Station(dt.datetime(2021, 6, 15, 15, 0, 0), dt.datetime(2021, 6, 15, 15, 30, 0), "Company 1", 2)
 
 available_students = determine_students(new_station_3)
-#print("length of list is " + str(len(available_students)))
+# print("length of list is " + str(len(available_students)))
 for student in available_students:
     Station_Master_List.append(new_station_3)
     student.add_vendor(new_station_3)
@@ -102,7 +104,7 @@ for student in available_students:
 new_station_4 = Station(dt.datetime(2021, 6, 15, 15, 0, 0), dt.datetime(2021, 6, 15, 15, 30, 0), "Company 1", 2)
 
 available_students = determine_students(new_station_4)
-#print("length of list is " + str(len(available_students)))
+# print("length of list is " + str(len(available_students)))
 for student in available_students:
     Station_Master_List.append(new_station_4)
     student.add_vendor(new_station_4)
@@ -110,7 +112,7 @@ for student in available_students:
 new_station_5 = Station(dt.datetime(2021, 6, 15, 15, 0, 0), dt.datetime(2021, 6, 15, 15, 30, 0), "Company 1", 2)
 
 available_students = determine_students(new_station_5)
-#print("length of list is " + str(len(available_students)))
+# print("length of list is " + str(len(available_students)))
 for student in available_students:
     Station_Master_List.append(new_station_5)
     student.add_vendor(new_station_5)
@@ -118,13 +120,23 @@ for student in available_students:
 new_station_6 = Station(dt.datetime(2021, 6, 15, 15, 0, 0), dt.datetime(2021, 6, 15, 15, 30, 0), "Company 1", 2)
 
 available_students = determine_students(new_station_6)
-#print("length of list is " + str(len(available_students)))
+# print("length of list is " + str(len(available_students)))
 for student in available_students:
     Station_Master_List.append(new_station_6)
     student.add_vendor(new_station_6)
-
 
 for student in students:
     print(student.name)
     print(student.visited_list)
     student.print_schedule()
+
+
+def get_student(name_needed):
+    stationlist = []
+    for item in students:
+        if item.name == name_needed:
+            for station in item.station_list:
+                start = str(station.starttime).split()
+                end = str(station.endtime).split()
+                stationlist.append({"Date": start[0], "Start Time": start[1], "End Time": end[1], "Company": station.company})
+    return stationlist
