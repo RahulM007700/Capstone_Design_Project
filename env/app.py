@@ -8,8 +8,9 @@ from flask import (
     url_for
 )
 from pymongo import MongoClient
+import thing
 
-from env.thing import get_student
+from thing import get_master_list, get_student
 
 client = MongoClient()
 
@@ -26,6 +27,7 @@ class User:
 users = []
 users.append(User(id=1, username='Rahul@gmail.com', password='password', type='student'))
 users.append(User(id=2, username='Wayhar@gmail.com', password='password', type='admin'))
+users.append(User(id=3, username='Billy@gmail.com', password='password', type='student'))
 
 
 app = Flask(__name__)
@@ -71,10 +73,11 @@ def student():
         session.pop('user_id', None)
         return redirect(url_for('logout'))
     student_1 = get_student(str(g.user))
+    master_list = get_master_list()
     print(g.user)
     print("list")
     print(student_1)
-    return render_template('index.html', student=student_1)
+    return render_template('index.html', student=student_1, schedule=master_list)
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
@@ -86,15 +89,32 @@ def admin():
         elif request.form["button"] == "logout":
             session.pop('user_id', None)
             return redirect(url_for('logout'))
-
-    return render_template('admin.html')
+    master_list = get_master_list()
+    print("master list is")
+    print(master_list)
+    return render_template('admin.html', schedule=master_list)
 
 @app.route('/logout')
 def logout():
     return redirect(url_for('login'))
 
-@app.route('/editpage')
+@app.route('/editpage', methods=['GET', 'POST'])
 def editpage():
+    print("method is")
+    print(request.method)
+    if not g.user:
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        print(request.form)
+        print(request.form["button2"])
+        if request.form["button2"] == "home":
+            print("return here")
+            return redirect(url_for("admin"))
+        elif request.form["button2"] == "logout":
+            print("return there")
+            session.pop('user_id', None)
+            return redirect(url_for('logout'))
+
     return render_template("lab.html")
 
 if __name__ == '__main__':
