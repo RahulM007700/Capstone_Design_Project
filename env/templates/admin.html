@@ -10,16 +10,30 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cabin:700">
     <link rel="stylesheet" href="../static/assets/fonts/font-awesome.min.css">
     <link rel="stylesheet" href="../static/assets/css/Login-Form-Clean.css">
+    <style>
+        #mainNav {
+            background: #5d9fa3;
+        }
+        table, td {
+            border: 1px solid white;
+            border-spacing: 5px;
+            padding: 5px;
+        }
+        
+    </style>
 </head>
 
 <body id="page-top">
-    <nav class="navbar navbar-light navbar-expand-md navbar navbar-expand-lg static-top" id="mainNav" style="background: #5d9fa3;">
-        <div class="container"><a class="navbar-brand js-scroll-trigger" href="#">Marine biological laboratory</a><button data-toggle="collapse" class="navbar-toggler navbar-toggler-right" data-target="#navbarResponsive" type="button" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" value="Menu"><i class="fa fa-bars"></i></button>
+    <nav class="navbar navbar-light navbar-expand-md navbar navbar-expand-lg static-top" id="mainNav">
+        <div class="container"><a class="navbar-brand js-scroll-trigger" href="#">Marine biological laboratory</a><button data-toggle="collapse" class="navbar-toggler navbar-toggler-right" 
+            data-target="#navbarResponsive" type="button" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" value="Menu"><i class="fa fa-bars"></i></button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="nav navbar-nav ml-auto">
                     <li class="nav-item nav-link js-scroll-trigger"><a class="nav-link active js-scroll-trigger" href="#home" style="border: 1px solid rgba(255,255,255,0.3)">Home</a></li>
-                    <li class="nav-item nav-link js-scroll-trigger"><form method="POST"><button name="button" value="edit" style="background: rgba(255,255,255,0.3);color: white; padding: 8px; border: 1px solid rgba(255,255,255,0.3);">EDIT SCHEDULE</button></form></li>
-                    <li class="nav-item nav-link js-scroll-trigger"><form method="POST"><button name="button" value="logout" style="background: rgba(255,255,255,0.3);color: white; padding: 8px; border: 1px solid rgba(255,255,255,0.3);">LOG OUT</button></form></li>
+                    <li class="nav-item nav-link js-scroll-trigger"><form method="POST"><button name="button" value="edit" style="background: rgba(255,255,255,0.3);color: white; padding: 8px; 
+                        border: 1px solid rgba(255,255,255,0.3);">EDIT SCHEDULE</button></form></li>
+                    <li class="nav-item nav-link js-scroll-trigger"><form method="POST"><button name="button" value="logout" style="background: rgba(255,255,255,0.3);color: white; padding: 8px; 
+                        border: 1px solid rgba(255,255,255,0.3);">LOG OUT</button></form></li>  
                 </ul>
             </div>
         </div>
@@ -31,7 +45,8 @@
                     <div class="col-lg-8 mx-auto">
                         <h1 class="brand-heading">welcome</h1>
                         <h1 class="brand-heading">admin</h1>
-                        <p class="intro-text">Admin homepage for viewing entire schedule. <br> View full schedule below or edit schedule by clicking the appropriate button.<br></p><a class="btn btn-link btn-circle" role="button" href="#about"><i class="fa fa-angle-double-down animated"></i></a>
+                        <p class="intro-text">Admin homepage for viewing entire schedule. <br> View full schedule below or edit schedule by clicking the appropriate button.<br></p>
+                            <a class="btn btn-link btn-circle" role="button" href="#about"><i class="fa fa-angle-double-down animated"></i></a>
                     </div>
                 </div>
             </div>
