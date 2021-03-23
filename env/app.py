@@ -47,8 +47,8 @@ def before_request():
 def login():
     if request.method == 'POST':            
         session.pop('user_id', None)
-        print(request.form['email'])
-        print(request.form['password'])
+        #print(request.form['email'])
+        #print(request.form['password'])
         username = request.form['email']
         password = request.form['password']
         
