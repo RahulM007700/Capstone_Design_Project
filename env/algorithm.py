@@ -1,102 +1,200 @@
-from ortools.sat.python import cp_model
+import datetime as dt
+import pymongo
+import urllib
+from pymongo import MongoClient
+
+connurl = "mongodb+srv://Rahul_Muthyala:" + urllib.parse.quote("P@$$word") + "@captstone-cluster.njozi.mongodb.net/Rotation_Data?retryWrites=true&w=majority"
+client = pymongo.MongoClient(connurl)
+mydb = client["Rotation_Data"]
+Users = mydb["Users"]
+Students = mydb["Students"]
+Stations = mydb["Stations"]
 
 
-class NursesPartialSolutionPrinter(cp_model.CpSolverSolutionCallback):
-    """Print intermediate solutions."""
+class Student:
+    def __init__(self, id, email, first_name, last_name):
+        self.id = id
+        self.email = email
+        self.name = first_name + " " + last_name
+        self.first_name = first_name
+        self.last_name = last_name
+        self.station_list = []
+        self.visited_list = []
 
-    def __init__(self, shifts, num_nurses, num_days, num_shifts, sols):
-        cp_model.CpSolverSolutionCallback.__init__(self)
-        self._shifts = shifts
-        self._num_nurses = num_nurses
-        self._num_days = num_days
-        self._num_shifts = num_shifts
-        self._solutions = set(sols)
-        self._solution_count = 0
+    def add_vendor(self, Station):
+        find = {"_id": self.id}
+        update = {"$push": {"Station_List": {
+            "Station_id": Station.id,
+            "Start_Time": Station.starttime,
+            "End_Time": Station.endtime,
+            "Company": Station.company,
+            "Lab_Name": Station.lab_name,
+        }}}
+        Students.update_one(find, update)
+        self.station_list.append(Station)
+        for item in self.visited_list:
+            if item["Company"] is Station.company:
+                item["Times_Visited"] += 1
+                find = {"_id": self.id}
+                update = {"$set": {Station.company: item["Times_Visited"]}}
+                Students.update_one(find, update)
 
-    def on_solution_callback(self):
-        if self._solution_count in self._solutions:
-            print('Solution %i' % self._solution_count)
-            for d in range(self._num_days):
-                print('Day %i' % d)
-                for n in range(self._num_nurses):
-                    is_working = False
-                    for s in range(self._num_shifts):
-                        if self.Value(self._shifts[(n, d, s)]):
-                            is_working = True
-                            print('  Nurse %i works shift %i' % (n, s))
-                    if not is_working:
-                        print('  Nurse {} does not work'.format(n))
-            print()
-        self._solution_count += 1
+    def add_new_company(self, name):
+        not_exist = True
+        for item in self.visited_list:
+            if item["Company"] == name:
+                not_exist = False
 
-    def solution_count(self):
-        return self._solution_count
+        if not_exist:
+            self.visited_list.append({"Company": name, "Times_Visited": 0})
 
+    def print_schedule(self):
+        print("Date\t\tStart Time\tEnd Time\tVendor")
+        for item in self.station_list:
+            temp1 = str(item.starttime).split()
+            temp2 = str(item.endtime).split()
+            print(temp1[0] + "\t" + temp1[1] + "\t" + temp2[1] + "\t" + item.company)
 
-def main():
-    # Data.
-    num_nurses = 3
-    num_shifts = 3
-    num_days = 3
-    all_nurses = range(num_nurses)
-    all_shifts = range(num_shifts)
-    all_days = range(num_days)
-    # Creates the model.
-    model = cp_model.CpModel()
-
-    # Creates shift variables.
-    # shifts[(n, d, s)]: nurse 'n' works shift 's' on day 'd'.
-    shifts = {}
-    for n in all_nurses:
-        for d in all_days:
-            for s in all_shifts:
-                shifts[(n, d, s)] = model.NewBoolVar('shift_n%id%is%i' % (n, d, s))
-
-    # Each shift is assigned to exactly one nurse in the schedule period.
-    for d in all_days:
-        for s in all_shifts:
-            model.Add(sum(shifts[(n, d, s)] for n in all_nurses) == 1)
-
-    # Each nurse works at most one shift per day.
-    for n in all_nurses:
-        for d in all_days:
-            model.Add(sum(shifts[(n, d, s)] for s in all_shifts) <= 1)
-
-    # Try to distribute the shifts evenly, so that each nurse works
-    # min_shifts_per_nurse shifts. If this is not possible, because the total
-    # number of shifts is not divisible by the number of nurses, some nurses will
-    # be assigned one more shift.
-    min_shifts_per_nurse = (num_shifts * num_days) // num_nurses
-    if num_shifts * num_days % num_nurses == 0:
-        max_shifts_per_nurse = min_shifts_per_nurse
-    else:
-        max_shifts_per_nurse = min_shifts_per_nurse + 1
-    for n in all_nurses:
-        num_shifts_worked = 0
-        for d in all_days:
-            for s in all_shifts:
-                num_shifts_worked += shifts[(n, d, s)]
-        model.Add(min_shifts_per_nurse <= num_shifts_worked)
-        model.Add(num_shifts_worked <= max_shifts_per_nurse)
-
-    # Creates the solver and solve.
-    solver = cp_model.CpSolver()
-    solver.parameters.linearization_level = 0
-    # Display the first five solutions.
-    a_few_solutions = range(5)
-    solution_printer = NursesPartialSolutionPrinter(shifts, num_nurses,
-                                                    num_days, num_shifts,
-                                                    a_few_solutions)
-    solver.SearchForAllSolutions(model, solution_printer)
-
-    # Statistics.
-    print()
-    print('Statistics')
-    print('  - conflicts       : %i' % solver.NumConflicts())
-    print('  - branches        : %i' % solver.NumBranches())
-    print('  - wall time       : %f s' % solver.WallTime())
-    print('  - solutions found : %i' % solution_printer.solution_count())
+    def get_station_list(self):
+        return self.station_list
 
 
-if __name__ == '__main__':
-    main()
+class Station:
+    def __init__(self, id, starttime, endtime, company, max_students, lab_name, list):
+        self.id = id
+        self.starttime = starttime
+        self.endtime = endtime
+        self.company = company
+        self.max_students = max_students
+        self.lab_name = lab_name
+        self.student_list = list
+
+    def add_student(self, new_student):
+        self.student_list.append(new_student)
+
+
+def determine_students(Station):
+    tempList = students
+    available_students = []
+
+    if len(Station_Master_List) is 0:
+        for i in range(Station.max_students):
+            available_students.append(tempList[i])
+        return available_students
+
+    limit = Station.max_students
+    for i in range(1, len(tempList)):
+        key = tempList[i]
+        keyvistedlist = key.visited_list
+        tempvisitedlist = tempList[i].visited_list
+        x = 0
+        for l in range(0, len(keyvistedlist) - 1):
+            if keyvistedlist[l]["Company"] is Station.company:
+                x = l
+                break
+        j = i - 1
+        while j >= 0 and key.visited_list[x]["Times_Visited"] < tempList[j].visited_list[x]["Times_Visited"]:
+            tempList[j + 1] = tempList[j]
+            j -= 1
+        tempList[j + 1] = key
+
+    for i in range(Station.max_students):
+        available_students.append(tempList[i])
+
+    '''
+    booleanList = []
+    for student in available_students:
+        for station in student.station_list:
+            if Station.starttime >= station.starttime and Station.endtime <= station.endtime:
+                booleanList.append(False)
+            else:
+                booleanList.append(True)
+
+    for i in range(limit):
+        if not booleanList:
+            available_students.append(available_students.pop(i))
+    '''
+    return available_students
+
+
+def new_station(lab_name, company_name, date, start_time, end_time, group_size):
+    d = date.split("-")
+    st = start_time.split(":")
+    et = end_time.split(":")
+    for student in students:
+        student.add_new_company(company_name)
+        find = {"_id": student.id}
+        update = {"$set": {company_name: 0}}
+        Students.update_one(find, update)
+    stat = Station(len(Station_Master_List), dt.datetime(int(d[0]), int(d[1]), int(d[2]), int(st[0]), int(st[1]), 0),
+                   dt.datetime(int(d[0]), int(d[1]), int(d[2]), int(et[0]), int(et[1]), 0), company_name,
+                   int(group_size), lab_name, [])
+
+    available_students = determine_students(stat)
+    Station_Master_List.append(stat)
+    Stations.insert_one({
+        "_id": len(Station_Master_List)-1,
+        "Start_Time": stat.starttime,
+        "End_Time": stat.endtime,
+        "Company_Name": stat.company,
+        "Group_Size": stat.max_students,
+        "Lab_Name": stat.lab_name,
+        "Student_List": []
+    })
+    for student in available_students:
+        Station_Master_List[len(Station_Master_List) - 1].student_list.append(student.name)
+        find = {"_id": len(Station_Master_List)-1}
+        update = {"$push": {"Student_List": student.name}}
+        Stations.update_one(find, update)
+        student.add_vendor(stat)
+
+
+Station_Master_List = []
+students = []
+for user in Users.find():
+    if user["Role"] == "student":
+        students.append(Student(id=user["_id"], email=user["Email"], first_name=user["First_Name"], last_name=user["Last_Name"]))
+        #Students.insert_one({"_id": user["_id"], "Email": user["Email"], "First_Name": user["First_Name"],"Last_Name": user["Last_Name"], "Station_List": []})
+
+for station in Stations.find():
+    try:
+        Station_Master_List.append(Station(id=station["_id"], starttime=station["Start_Time"], endtime=station["End_Time"], company=station["Company_Name"], lab_name=station["Lab_Name"], max_students=station["Group_Size"], list=station["Student_List"]))
+    except:
+        print()
+'''
+for student in students:
+    print(student.name)
+    print(student.visited_list)
+    student.print_schedule()
+'''
+
+def get_student(name_needed):
+    print("here")
+    stationlist = []
+    for item in Students.find():
+        if item["Email"].lower() == name_needed.lower():
+            for station in item["Station_List"]:
+                #print(station)
+                start = str(station["Start_Time"]).split()
+                #print(start)
+                end = str(station["End_Time"]).split()
+                company_name = str(station["Company"])
+                lab_name = str(station["Lab_Name"])
+                stationlist.append({"Date": start[0], "Lab Name": lab_name, "Start Time": start[1], "End Time": end[1], "Company": company_name})
+    return stationlist
+
+
+def get_master_list():
+    station_list = []
+    for item in Stations.find():
+        print(item)
+        start = str(item["Start_Time"]).split()
+        end = str(item["End_Time"]).split()
+        company_name = str(item["Company_Name"])
+        lab_name = str(item["Lab_Name"])
+        student_list = item["Student_List"]
+        print(student_list)
+        station_list.append({"Date": start[0], "Lab Name":lab_name, "Start Time": start[1], "End Time": end[1], "Student List": student_list,
+             "Company": company_name})
+    return station_list
+

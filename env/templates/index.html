@@ -57,14 +57,16 @@
                     <table>
                         <tr>
                             <td>Date</td>
+                            <td>Lab Name</td>
                             <td>Start Time</td>
                             <td>End Time</td>
                             <td>Company</td>
                             <td>Student List</td>
                         </tr>
-                        {% for item in schedule%}
+                        {% for item in schedule %}
                             <tr>
                                 <td>{{ item["Date"] }}</td>
+                                <td>{{ item["Lab Name"] }}</td>
                                 <td>{{ item["Start Time"] }}</td>
                                 <td>{{ item["End Time"] }}</td>
                                 <td>{{ item["Company"] }}</td>
@@ -76,13 +78,15 @@
                     <table>
                         <tr>
                             <td>Date</td>
+                            <td>Lab Name</td>
                             <td>Start Time</td>
                             <td>End Time</td>
                             <td>Company</td>
                         </tr>
-                        {% for item in student%}
+                        {% for item in student %}
                             <tr>
                                 <td>{{ item["Date"] }}</td>
+                                <td>{{ item["Lab Name"] }}</td>
                                 <td>{{ item["Start Time"] }}</td>
                                 <td>{{ item["End Time"] }}</td>
                                 <td>{{ item["Company"] }}</td>

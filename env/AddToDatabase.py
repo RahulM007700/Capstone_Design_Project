@@ -9,8 +9,10 @@ db = client.Rotation_Data
 
 data = pd.read_excel("students.xlsx")
 dict = data.to_dict('records')
-studentlist = []
+userlist = []
 for i in range(len(dict)):
-    studentlist.append({"_id": i, "First_Name": dict[i]["FirstName"], "Last_Name": dict[i]["LastName"], "Email": "", "Password": "", "Role": ""})
+    userlist.append({"_id": i, "First_Name": dict[i]["FirstName"], "Last_Name": dict[i]["LastName"], "Email": dict[i]["FirstName"]+"@gmail.com", "Password": "password", "Role": "student"})
 
-db.User.insert_many(studentlist)
+userlist.append({"_id": len(userlist), "First_Name": "Wayhar", "Last_Name": "Ngeth", "Email": "Wayhar@gmail.com", "Password": "password", "Role": "admin"})
+
+db["Users"].insert_many(userlist)

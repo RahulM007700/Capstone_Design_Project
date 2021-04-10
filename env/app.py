@@ -1,3 +1,4 @@
+import pymongo
 from flask import (
     Flask,
     g,
@@ -7,31 +8,40 @@ from flask import (
     session,
     url_for
 )
+import urllib
 from pymongo import MongoClient
-import thing
+from algorithm import get_master_list, get_student, new_station
 
-from thing import get_master_list, get_student
-
-client = MongoClient()
+connurl = "mongodb+srv://Rahul_Muthyala:" + urllib.parse.quote(
+    "P@$$word") + "@captstone-cluster.njozi.mongodb.net/Rotation_Data?retryWrites=true&w=majority"
+client = pymongo.MongoClient(connurl)
+mydb = client["Rotation_Data"]
+Users = mydb["Users"]
+Stations = mydb["Stations"]
+Students = mydb["Students"]
 
 class User:
-    def __init__(self, id, username, password, type):
+    def __init__(self, id, username, password, role, first_name, last_name):
         self.id = id
         self.username = username
         self.password = password
-        self.type = type
+        self.role = role
+        self.first_name = first_name
+        self.last_name = last_name
 
     def __repr__(self):
         return str(self.username)
 
-users = []
-users.append(User(id=1, username='Rahul@gmail.com', password='password', type='student'))
-users.append(User(id=2, username='Wayhar@gmail.com', password='password', type='admin'))
-users.append(User(id=3, username='Billy@gmail.com', password='password', type='student'))
 
+users = []
+print("x is")
+for user in Users.find():
+    users.append(User(id=user["_id"], username=user["Email"].lower(), password=user["Password"], role=user["Role"],
+                      first_name=user["First_Name"], last_name=user["Last_Name"]))
 
 app = Flask(__name__)
 app.secret_key = 'somesecretkeythatonlyishouldknow'
+
 
 @app.before_request
 def before_request():
@@ -40,29 +50,30 @@ def before_request():
     if 'user_id' in session:
         user = [x for x in users if x.id == session['user_id']][0]
         g.user = user
-        
+
 
 @app.route('/login', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':            
+    if request.method == 'POST':
         session.pop('user_id', None)
-        #print(request.form['email'])
-        #print(request.form['password'])
+        # print(request.form['email'])
+        # print(request.form['password'])
         username = request.form['email']
         password = request.form['password']
-        
+
         user = [x for x in users if x.username == username][0]
         if user and user.password == password:
             session['user_id'] = user.id
-            if(user.type=='student'):
+            if user.role == 'student':
                 return redirect(url_for('student'))
-            if(user.type=='admin'):
+            if user.role == 'admin':
                 return redirect(url_for('admin'))
 
         return redirect(url_for('login'))
 
     return render_template('login.html')
+
 
 @app.route('/student', methods=['GET', 'POST'])
 def student():
@@ -79,6 +90,7 @@ def student():
     print(student_1)
     return render_template('index.html', student=student_1, schedule=master_list)
 
+
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     if not g.user:
@@ -90,13 +102,15 @@ def admin():
             session.pop('user_id', None)
             return redirect(url_for('logout'))
     master_list = get_master_list()
-    print("master list is")
-    print(master_list)
+    #print("master list is")
+    #print(master_list)
     return render_template('admin.html', schedule=master_list)
+
 
 @app.route('/logout')
 def logout():
     return redirect(url_for('login'))
+
 
 @app.route('/editpage', methods=['GET', 'POST'])
 def editpage():
@@ -106,16 +120,23 @@ def editpage():
         return redirect(url_for('login'))
     if request.method == 'POST':
         print(request.form)
-        print(request.form["button2"])
-        if request.form["button2"] == "home":
-            print("return here")
-            return redirect(url_for("admin"))
-        elif request.form["button2"] == "logout":
-            print("return there")
-            session.pop('user_id', None)
-            return redirect(url_for('logout'))
+        try:
+            if request.form["home"] == "home":
+                print("return here")
+                return redirect(url_for("admin"))
+            elif request.form["logout"] == "logout":
+                print("return there")
+                session.pop('user_id', None)
+                return redirect(url_for('logout'))
+        except:
+            print()
+
+
+        new_station(request.form["station_name"], request.form["company_name"], request.form["date"], request.form["start_time"], request.form["end_time"], request.form["group_size"])
+        return redirect(request.url)
 
     return render_template("lab.html")
+
 
 if __name__ == '__main__':
     app.run(debug=True)

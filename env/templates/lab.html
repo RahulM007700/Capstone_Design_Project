@@ -18,11 +18,11 @@
             data-target="#navbarResponsive" type="button" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" value="Menu"><i class="fa fa-bars"></i></button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="nav navbar-nav ml-auto">
-                    <li class="nav-item nav-link js-scroll-trigger"><form method="POST"><button name="button2" value="home" style="background: rgba(255,255,255,0.3);color: white; padding: 8px; 
+                    <li class="nav-item nav-link js-scroll-trigger"><form method="POST"><button name="home" value="home" style="background: rgba(255,255,255,0.3);color: white; padding: 8px;
                         border: 1px solid rgba(255,255,255,0.3);">HOME</button></form></li>
                     <li class="nav-item nav-link js-scroll-trigger"><a class="nav-link js-scroll-trigger" href="#about" style="background: rgba(255,255,255,0.3); 
                         border: 1px solid rgba(255,255,255,0.3)">Edit Schedule</a></li>
-                    <li class="nav-item nav-link js-scroll-trigger"><form method="POST"><button name="button2" value="logout" style="background: rgba(255,255,255,0.3);color: white; padding: 8px; 
+                    <li class="nav-item nav-link js-scroll-trigger"><form method="POST"><button name="logout" value="logout" style="background: rgba(255,255,255,0.3);color: white; padding: 8px;
                         border: 1px solid rgba(255,255,255,0.3);">LOG OUT</button></form></li>
                 </ul>
             </div>
@@ -42,24 +42,27 @@
     </header>
     <section id="about" class="content-section text-center" style="height: 720px;margin-left: 245px;width: 960px;">
         <!--start of form-->
-        <form method="POST">
+        <form action="/editpage" method="POST">
             <div class="container" style="height: 350px;border-width: 5px;border-style: solid;padding-top: 20px;margin: 5px;margin-left: 15px;margin-right: 15px;margin-top: -100px;">
-                <div class="form-group row"><label class="col-2 col-form-label">Station Name</label>
-                    <div class="col-8"><input class="form-control form-control" type="text"></div>
+                <div class="form-group row"><label class="col-2 col-form-label">Lab Name</label>
+                    <div class="col-8"><input class="form-control form-control" type="text" id="station_name" name="station_name"></div>
                 </div>
                 <div class="form-group row"><label class="col-2 col-form-label">Company Name</label>
-                    <div class="col-8"><input class="form-control form-control" type="text"></div>
+                    <div class="col-8"><input class="form-control form-control" type="text" id="company_name" name="company_name"></div>
                 </div>
                 <div class="form-group row"><label class="col-2 col-form-label">Date</label>
-                    <div class="col-8"><input class="form-control form-control" type="date"></div>
+                    <div class="col-8"><input class="form-control form-control" type="date" id="date" name="date"></div>
                 </div>
                 <div class="form-group row"><label class="col-2 col-form-label">Start Time</label>
-                    <div class="col-8"><input class="form-control form-control" type="time"></div>
+                    <div class="col-8"><input class="form-control form-control" type="time" id="start_time" name="start_time"></div>
                 </div>
                 <div class="form-group row"><label class="col-2 col-form-label">End Time</label>
-                    <div class="col-8"><input class="form-control form-control" type="time"></div>
+                    <div class="col-8"><input class="form-control form-control" type="time" id="end_time" name="end_time"></div>
                 </div>
-                <button class="btn btn-primary" type="button" name="submit_button">submit</button>
+                <div class="form-group row"><label class="col-2 col-form-label">Group Size (max)</label>
+                    <div class="col-8"><input class="form-control form-control" type="text" id="group_size" name="group_size"></div>
+                </div>
+                <button class="btn btn-primary" type="submit" name="submit_button" value="submit">submit</button>
             </div>
         </form>
     </section>
