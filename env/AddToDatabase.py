@@ -10,11 +10,11 @@ Stations = mydb["Stations"]
 
 #print(db.Company.find_one({"_id": 1}))
 
-data = pd.read_excel("students.xlsx")
-dict = data.to_dict('records')
-userlist = []
-for i in range(len(dict)):
-    userlist.append({"_id": i, "First_Name": dict[i]["FirstName"], "Last_Name": dict[i]["LastName"], "Email": dict[i]["FirstName"]+"@gmail.com", "Password": "password", "Role": "student"})
+#data = pd.read_excel("students.xlsx")
+#dict = data.to_dict('records')
+#userlist = []
+#for i in range(len(dict)):
+#    userlist.append({"_id": i, "First_Name": dict[i]["FirstName"], "Last_Name": dict[i]["LastName"], "Email": dict[i]["FirstName"]+"@gmail.com", "Password": "password", "Role": "student"})
 
 #userlist.append({"_id": len(userlist), "First_Name": "Wayhar", "Last_Name": "Ngeth", "Email": "Wayhar@gmail.com", "Password": "password", "Role": "admin"})
 

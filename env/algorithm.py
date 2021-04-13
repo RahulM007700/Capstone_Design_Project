@@ -29,6 +29,7 @@ class Student:
             "End_Time": Station.endtime,
             "Company": Station.company,
             "Lab_Name": Station.lab_name,
+            "Station_Name": Station.station_name
         }}}
         Students.update_one(find, update)
         self.station_list.append(Station)
