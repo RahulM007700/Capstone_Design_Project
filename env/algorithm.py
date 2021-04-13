@@ -12,14 +12,14 @@ Stations = mydb["Stations"]
 
 
 class Student:
-    def __init__(self, id, email, first_name, last_name):
+    def __init__(self, id, email, first_name, last_name, station_list, visited_list):
         self.id = id
         self.email = email
         self.name = first_name + " " + last_name
         self.first_name = first_name
         self.last_name = last_name
-        self.station_list = []
-        self.visited_list = []
+        self.station_list = station_list
+        self.visited_list = visited_list
 
     def add_vendor(self, Station):
         find = {"_id": self.id}
@@ -35,8 +35,9 @@ class Student:
         for item in self.visited_list:
             if item["Company"] is Station.company:
                 item["Times_Visited"] += 1
-                find = {"_id": self.id}
-                update = {"$set": {Station.company: item["Times_Visited"]}}
+                c = "Visited_List.$.Times_Visited"
+                find = {"_id": self.id, "Visited_List.Company": Station.company}
+                update = {"$inc": {c: 1}}
                 Students.update_one(find, update)
 
     def add_new_company(self, name):
@@ -60,13 +61,14 @@ class Student:
 
 
 class Station:
-    def __init__(self, id, starttime, endtime, company, max_students, lab_name, list):
+    def __init__(self, id, starttime, endtime, company, max_students, lab_name, station_name, list):
         self.id = id
         self.starttime = starttime
         self.endtime = endtime
         self.company = company
         self.max_students = max_students
         self.lab_name = lab_name
+        self.station_name = station_name
         self.student_list = list
 
     def add_student(self, new_student):
@@ -98,9 +100,38 @@ def determine_students(Station):
             j -= 1
         tempList[j + 1] = key
 
-    for i in range(Station.max_students):
+    for i in range(len(tempList)):
         available_students.append(tempList[i])
 
+    print("before")
+    for x in available_students:
+        print(x.name)
+    i = 0
+    last_student = available_students[len(available_students)-1]
+    while i < len(available_students):
+        print(i)
+        Free = True
+        if available_students[i] == last_student:
+            break
+        print(available_students[i].name)
+        print(available_students[i].station_list)
+        for s in available_students[i].station_list:
+            print("Station starttime: " + str(Station.starttime))
+            print("Station endtime: " + str(Station.endtime))
+            print("s starttime: " + str(s.starttime))
+            print("s endtime: " + str(s.endtime))
+            if Station.starttime >= s.starttime and Station.endtime <= s.endtime:
+                print("false")
+                Free = False
+        if not Free:
+            available_students.append(available_students.pop(i))
+            i = i - 1
+            print("i here is " + str(i))
+        i += 1
+
+    print("after")
+    for x in available_students:
+        print(x.name)
     '''
     booleanList = []
     for student in available_students:
@@ -117,18 +148,22 @@ def determine_students(Station):
     return available_students
 
 
-def new_station(lab_name, company_name, date, start_time, end_time, group_size):
+def new_station(lab_name, station_name, company_name, date, start_time, end_time, group_size):
     d = date.split("-")
     st = start_time.split(":")
     et = end_time.split(":")
     for student in students:
         student.add_new_company(company_name)
+        print("Find")
         find = {"_id": student.id}
-        update = {"$set": {company_name: 0}}
+        update = {"$push": {"Visited_List": {
+            "Company": company_name,
+            "Times_Visited": 0
+        }}}
         Students.update_one(find, update)
-    stat = Station(len(Station_Master_List), dt.datetime(int(d[0]), int(d[1]), int(d[2]), int(st[0]), int(st[1]), 0),
-                   dt.datetime(int(d[0]), int(d[1]), int(d[2]), int(et[0]), int(et[1]), 0), company_name,
-                   int(group_size), lab_name, [])
+    stat = Station(id=len(Station_Master_List), starttime=dt.datetime(int(d[0]), int(d[1]), int(d[2]), int(st[0]), int(st[1]), 0),
+                   endtime=dt.datetime(int(d[0]), int(d[1]), int(d[2]), int(et[0]), int(et[1]), 0), company=company_name,
+                   max_students=int(group_size), lab_name=lab_name, station_name=station_name, list=[])
 
     available_students = determine_students(stat)
     Station_Master_List.append(stat)
@@ -139,21 +174,24 @@ def new_station(lab_name, company_name, date, start_time, end_time, group_size):
         "Company_Name": stat.company,
         "Group_Size": stat.max_students,
         "Lab_Name": stat.lab_name,
+        "Station_Name": stat.station_name,
         "Student_List": []
     })
+    count = 0
     for student in available_students:
-        Station_Master_List[len(Station_Master_List) - 1].student_list.append(student.name)
-        find = {"_id": len(Station_Master_List)-1}
-        update = {"$push": {"Student_List": student.name}}
-        Stations.update_one(find, update)
-        student.add_vendor(stat)
+        if count < stat.max_students:
+            Station_Master_List[len(Station_Master_List) - 1].student_list.append(student.name)
+            find = {"_id": len(Station_Master_List)-1}
+            update = {"$push": {"Student_List": student.name}}
+            Stations.update_one(find, update)
+            student.add_vendor(stat)
+            count = count + 1
 
 
 Station_Master_List = []
 students = []
-for user in Users.find():
-    if user["Role"] == "student":
-        students.append(Student(id=user["_id"], email=user["Email"], first_name=user["First_Name"], last_name=user["Last_Name"]))
+for user in Students.find():
+        students.append(Student(id=user["_id"], email=user["Email"], first_name=user["First_Name"], last_name=user["Last_Name"], station_list=user["Station_List"], visited_list=user["Visited_List"]))
         #Students.insert_one({"_id": user["_id"], "Email": user["Email"], "First_Name": user["First_Name"],"Last_Name": user["Last_Name"], "Station_List": []})
 
 for station in Stations.find():
@@ -180,7 +218,8 @@ def get_student(name_needed):
                 end = str(station["End_Time"]).split()
                 company_name = str(station["Company"])
                 lab_name = str(station["Lab_Name"])
-                stationlist.append({"Date": start[0], "Lab Name": lab_name, "Start Time": start[1], "End Time": end[1], "Company": company_name})
+                station_name = str(station["Station_Name"])
+                stationlist.append({"Date": start[0], "Lab Name": lab_name, "Station Name": station_name, "Start Time": start[1], "End Time": end[1], "Company": company_name})
     return stationlist
 
 
@@ -192,9 +231,10 @@ def get_master_list():
         end = str(item["End_Time"]).split()
         company_name = str(item["Company_Name"])
         lab_name = str(item["Lab_Name"])
+        station_name = str(item["Station_Name"])
         student_list = item["Student_List"]
         print(student_list)
-        station_list.append({"Date": start[0], "Lab Name":lab_name, "Start Time": start[1], "End Time": end[1], "Student List": student_list,
+        station_list.append({"Date": start[0], "Lab Name":lab_name, "Station Name": station_name, "Start Time": start[1], "End Time": end[1], "Student List": student_list,
              "Company": company_name})
     return station_list
 

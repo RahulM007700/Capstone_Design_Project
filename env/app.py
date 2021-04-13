@@ -20,6 +20,7 @@ Users = mydb["Users"]
 Stations = mydb["Stations"]
 Students = mydb["Students"]
 
+
 class User:
     def __init__(self, id, username, password, role, first_name, last_name):
         self.id = id
@@ -34,7 +35,7 @@ class User:
 
 
 users = []
-print("x is")
+# print("x is")
 for user in Users.find():
     users.append(User(id=user["_id"], username=user["Email"].lower(), password=user["Password"], role=user["Role"],
                       first_name=user["First_Name"], last_name=user["Last_Name"]))
@@ -102,8 +103,8 @@ def admin():
             session.pop('user_id', None)
             return redirect(url_for('logout'))
     master_list = get_master_list()
-    #print("master list is")
-    #print(master_list)
+    # print("master list is")
+    # print(master_list)
     return render_template('admin.html', schedule=master_list)
 
 
@@ -131,8 +132,9 @@ def editpage():
         except:
             print()
 
-
-        new_station(request.form["station_name"], request.form["company_name"], request.form["date"], request.form["start_time"], request.form["end_time"], request.form["group_size"])
+        new_station(request.form["lab_name"], request.form["station_name"], request.form["company_name"],
+                    request.form["date"], request.form["start_time"], request.form["end_time"],
+                    request.form["group_size"])
         return redirect(request.url)
 
     return render_template("lab.html")
