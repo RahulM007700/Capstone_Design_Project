@@ -148,6 +148,17 @@ def determine_students(Station):
     '''
     return available_students
 
+Station_Master_List = []
+students = []
+for user in Students.find():
+        students.append(Student(id=user["_id"], email=user["Email"], first_name=user["First_Name"], last_name=user["Last_Name"], station_list=user["Station_List"], visited_list=user["Visited_List"]))
+        #Students.insert_one({"_id": user["_id"], "Email": user["Email"], "First_Name": user["First_Name"],"Last_Name": user["Last_Name"], "Station_List": []})
+
+for station in Stations.find():
+    try:
+        Station_Master_List.append(Station(id=station["_id"], starttime=station["Start_Time"], endtime=station["End_Time"], company=station["Company_Name"], lab_name=station["Lab_Name"], max_students=station["Group_Size"], list=station["Student_List"]))
+    except:
+        print()
 
 def new_station(lab_name, station_name, company_name, date, start_time, end_time, group_size):
     d = date.split("-")
@@ -155,7 +166,6 @@ def new_station(lab_name, station_name, company_name, date, start_time, end_time
     et = end_time.split(":")
     for student in students:
         student.add_new_company(company_name)
-        print("Find")
         find = {"_id": student.id}
         update = {"$push": {"Visited_List": {
             "Company": company_name,
@@ -168,8 +178,9 @@ def new_station(lab_name, station_name, company_name, date, start_time, end_time
 
     available_students = determine_students(stat)
     Station_Master_List.append(stat)
+    print(len(Station_Master_List))
     Stations.insert_one({
-        "_id": len(Station_Master_List)-1,
+        "_id": Stations.count(),
         "Start_Time": stat.starttime,
         "End_Time": stat.endtime,
         "Company_Name": stat.company,
@@ -189,17 +200,6 @@ def new_station(lab_name, station_name, company_name, date, start_time, end_time
             count = count + 1
 
 
-Station_Master_List = []
-students = []
-for user in Students.find():
-        students.append(Student(id=user["_id"], email=user["Email"], first_name=user["First_Name"], last_name=user["Last_Name"], station_list=user["Station_List"], visited_list=user["Visited_List"]))
-        #Students.insert_one({"_id": user["_id"], "Email": user["Email"], "First_Name": user["First_Name"],"Last_Name": user["Last_Name"], "Station_List": []})
-
-for station in Stations.find():
-    try:
-        Station_Master_List.append(Station(id=station["_id"], starttime=station["Start_Time"], endtime=station["End_Time"], company=station["Company_Name"], lab_name=station["Lab_Name"], max_students=station["Group_Size"], list=station["Student_List"]))
-    except:
-        print()
 '''
 for student in students:
     print(student.name)
