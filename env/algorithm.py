@@ -80,7 +80,7 @@ def determine_students(Station):
     tempList = students
     available_students = []
 
-    if len(Station_Master_List) is 0:
+    if len(Station_Master_List) == 0:
         for i in range(Station.max_students):
             available_students.append(tempList[i])
         return available_students
